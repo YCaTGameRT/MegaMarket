@@ -9,6 +9,7 @@ std::string* loginArr = new std::string[userSize]{ "admin", "user" };
 std::string* passArr = new std::string[userSize]{ "admin", "user" };
 std::string userStatus[3]{ "Супер Администратор", "Администратор", "Сотрудник" };
 std::string* statusArr = new std::string[userSize]{ userStatus[0], userStatus[2] };
+std::string currentStatus;
 
 //Функции
 void Start();
@@ -41,15 +42,18 @@ bool Login() {
 		std::cout << "Введите пароль\n";
 		Getline(pass);
 		if (login == "exit" && pass = "exit") {
+			currentStatus = "";
 			return false;
 		}
 		if (login == loginArr[0] && pass == passArr[0]) {
 			std::cout << "Добро пожаловать, " << loginArr[0] << "\nВаш статус: " << statusArr[0] << "\n\n";
+			currentStatus = statusArr[0];
 			return true;
 		}
 		for (size_t i = 1; i < userSize; i++) {
 			if (login == loginArr[i] && pass == passArr[i]) {
 				std::cout << "Добро пожаловать, " << loginArr[i] << "\nВаш статус: " << statusArr[i] << "\n\n";
+				currentStatus = statusArr[i];
 				return true;
 			}
 		}
