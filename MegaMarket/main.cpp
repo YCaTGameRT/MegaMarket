@@ -41,7 +41,7 @@ bool Login() {
 		Getline(login);
 		std::cout << "¬ведите пароль\n";
 		Getline(pass);
-		if (login == "exit" && pass = "exit") {
+		if (login == "exit" && pass == "exit") {
 			currentStatus = "";
 			return false;
 		}
