@@ -19,12 +19,16 @@ std::string* nameArr;
 unsigned int* countArr;
 double* priceArr;
 void CreateStorage();
-void ShowStorage();
+void ShowStorage(int mode = 0);
+void AddStorageItem();
+void RemoveStorageItem();
+void ChangePrice();
 
 //программа
 void Start();
 bool Login();
 void ShowSuperAdminMenu();
+bool IsNumber(const std::string& str);
 
 //система
 template<typename Arr> void FillArr(Arr* dynamicArr, Arr* staticArr, size_t size);
@@ -65,17 +69,174 @@ void CreateStorage() {
 	FillArr(countArr, count, storageSize);
 	FillArr(priceArr, price, storageSize);
 }
-void ShowStorage() {
-	std::cout << "ID\t" << std::left << std::setw(25) << "название товаров\t\tкол-во\t\tцена\n";
-	for (size_t i = 0; i < storageSize; i++) {
-		std::cout << idArr[i] << "\t" << std::left << std::setw(25) << nameArr[i] << "\t" << countArr[i] << "\t\t" << priceArr[i] << "\n";
+void ShowStorage(int mode) {
+	if (mode == 0) {
+		std::cout << "ID\t" << std::left << std::setw(25) << "название товаров\t\tкол-во\t\tцена\n";
+		for (size_t i = 0; i < storageSize; i++) {
+			std::cout << idArr[i] << "\t" << std::left << std::setw(25) << nameArr[i] << "\t" << countArr[i] << "\t\t" << priceArr[i] << "\n";
+			system("pause");
+			system("cls");
+			std::cout << "\n\n";
+		}
+	}
+	else if (mode == 1) {
+		std::cout << "ID\t" << std::left << std::setw(25) << "название товаров\t\tкол-во\n";
+		for (size_t i = 0; i < storageSize; i++) {
+			std::cout << idArr[i] << "\t" << std::left << std::setw(25) << nameArr[i] << "\t" << countArr[i] << "\n";
+		}
+	}
+	else if (mode == 2) {
+		std::cout << "ID\t" << std::left << std::setw(25) << "название товаров\t\tцена\n";
+		for (size_t i = 0; i < storageSize; i++) {
+			std::cout << idArr[i] << "\t" << std::left << std::setw(25) << nameArr[i] << "\t" << priceArr[i] << "\n";
+		}
+	}
+	else {
+		std::cout << "StorageMode Error\n";
+		std::invalid_argument("StorageMode Error");
+	}
+	std::cout << "\n\n";
+}
+void AddStorageItem() {
+	std::string choose, chooseId, chooseCount;
+	int id = 0;
+	unsigned count = 0;
+	while (true) {
+		system("cls");
+		ShowStorage(1);
+		std::cout << "Введите ID товара или exit для выхода\n>>: ";
+		Getline(chooseId);
+		if (chooseId == "exit") {
+			std::cout << "Отмена операции пополнения\n";
+			Sleep(1500);
+			break;
+		}
+		std::cout << "Введите кол-во товара для пополнения\n>>: ";
+		Getline(chooseCount);
+		if (IsNumber(chooseId) && IsNumber(chooseCount)) {
+			id = std::stoi(chooseId) - 1;
+			count = std::stoi(chooseCount);
+			if (id < 0 || id > storageSize - 1 || count < 0 || count > 132) {
+				std::cout << "Некорректный id или кол-во\nМаксимальное кол-во 132\n";
+				Sleep(1500);
+			}
+			else {
+				std::cout << std::left << std::setw(25) << nameArr[id] << "\t" << countArr[id] << " ---> " << countArr[id] + count << "\n\n";
+				std::cout << "Подтвердить?\n1 - да\n2 - нет\n>>: ";
+				Getline(choose);
+				if (choose == "1") {
+					countArr[id] += count;
+					std::cout << "Товар успешно пополнен\n";
+					Sleep(1500);
+					system("cls");
+					break;
+				}
+				else if (choose == "2") {
+					std::cout << "Отмена пополнения товара\n";
+					Sleep(1500);
+					system("cls");
+				}
+				else {
+					Err();
+				}
+			}
+		}
 	}
 }
-template<typename Arr> void FillArr(Arr* dynamicArr, Arr* staticArr, size_t size) {
-	for (size_t i = 0; i < size; i++) {
-		dynamicArr[i] = staticArr[i];
+void RemoveStorageItem() {
+	std::string choose, chooseId, chooseCount;
+	int id = 0;
+	unsigned count = 0;
+	while (true) {
+		system("cls");
+		ShowStorage(1);
+		std::cout << "Введите ID товара или exit для выхода\n>>: ";
+		Getline(chooseId);
+		if (chooseId == "exit") {
+			std::cout << "Отмена операции списания\n";
+			Sleep(1500);
+			break;
+		}
+		std::cout << "Введите кол-во товара для списания\n>>: ";
+		Getline(chooseCount);
+		if (IsNumber(chooseId) && IsNumber(chooseCount)) {
+			id = std::stoi(chooseId) - 1;
+			count = std::stoi(chooseCount);
+			if (id < 0 || id > storageSize - 1 || count < 0 || count > countArr[id]) {
+				std::cout << "Некорректный id или кол-во\\n";
+				Sleep(1500);
+			}
+			else {
+				std::cout << std::left << std::setw(25) << nameArr[id] << "\t" << countArr[id] << " ---> " << countArr[id] + count << "\n\n";
+				std::cout << "Подтвердить?\n1 - да\n2 - нет\n>>: ";
+				Getline(choose);
+				if (choose == "1") {
+					countArr[id] -= count;
+					std::cout << "Товар успешно списан\n";
+					Sleep(1500);
+					system("cls");
+					break;
+				}
+				else if (choose == "2") {
+					std::cout << "Отмена списания товара\n";
+					Sleep(1500);
+					system("cls");
+				}
+				else {
+					Err();
+				}
+			}
+		}
 	}
 }
+void ChangePrice() {
+	std::string choose, chooseId, newPrice;
+	int id = 0;
+	double price = 0.0;
+	while (true) {
+		system("cls");
+		ShowStorage(2);
+		std::cout << "Введите ID товара или exit для выхода\n>>: ";
+		Getline(chooseId);
+		if (chooseId == "exit") {
+			std::cout << "Отмена операции изменения цены\n";
+			Sleep(1500);
+			break;
+		}
+		std::cout << "Введите новую цену\n>>: ";
+		Getline(newPrice);
+		if (IsNumber(chooseId) && IsNumber(newPrice)) {
+			id = std::stoi(chooseId) - 1;
+			price = std::stod(newPrice) + 0.0;
+			if (id < 0 || id > storageSize - 1 || price < 0.0 || price > 9999999.99) {
+				std::cout << "Некорректный id или кол-во\nМаксимальный ценник 9999999.99\n";
+				Sleep(1500);
+			}
+			else {
+				std::cout << std::left << std::setw(25) << nameArr[id] << "\t" << priceArr[id] << " ---> " << price << "\n\n";
+				std::cout << "Подтвердить?\n1 - да\n2 - нет\n>>: ";
+				Getline(choose);
+				if (choose == "1") {
+					priceArr[id] = price;
+					std::cout << "Цена успешно изменена\n";
+					Sleep(1500);
+					system("cls");
+					break;
+				}
+				else if (choose == "2") {
+					std::cout << "Отмена изменения цены\n";
+					Sleep(1500);
+					system("cls");
+				}
+				else {
+					Err();
+				}
+			}
+		}
+	}
+}
+
+
 void Start() {
 	std::string choose;
 	std::cout << "Привет! Ты попал в MegaMarket!\n\n";
@@ -86,6 +247,7 @@ void Start() {
 				Getline(choose);
 				if (choose == "1") {
 					CreateStorage();
+					ShowSuperAdminMenu();
 					break;
 				}
 				else if (choose == "2") {
@@ -141,9 +303,62 @@ bool Login() {
 void ShowSuperAdminMenu() {
 	std::string choose;
 	while (true) {
-		system("cls");
-		std::cout << "1 - начать продажу\n2 - показать склад\n3 - пополнить склад\n4 - списать товар\n5 - изменить цену\n6 - редактировать склад\n7 - редактировать персонал\n8 - отчет о прибыли\n0 - закрвть смену\n>>: ";
+		std::cout << "1 - начать продажу\n2 - показать склад\n3 - пополнить склад\n4 - списать товар\n5 - изменить цену\n6 - редактировать склад\n7 - редактировать персонал\n8 - отчет о прибыли\n0 - закрыть смену\n>>: ";
 		Getline(choose);
+		if (choose == "1") {
+
+		}
+		else if (choose == "2") {
+			ShowStorage();
+		}
+		else if (choose == "3") {
+			AddStorageItem();
+		}
+		else if (choose == "4") {
+			RemoveStorageItem();
+		}
+		else if (choose == "5") {
+			ChangePrice();
+		}
+		else if (choose == "6") {
+
+		}
+		else if (choose == "7") {
+
+		}
+		else if (choose == "8") {
+
+		}
+		else if (choose == "0") {
+
+		}
+		else {
+			Err();
+		}
+	}
+}
+bool IsNumber(const std::string& str) {
+	if (str.size() <= 0 || str.size() >= 10) {
+		std::cout << "Некорректный ввод!\n";
+		std::cout << "Ошибка длины числа От 1 до 9 цифр включительно!\n\n";
+		Sleep(1500);
+		return false;
+	}
+	for (size_t i = 0; i < str.size(); i++) {
+		if (!std::isdigit(str[i])) {
+			std::cout << "Некорректный ввод!\n";
+			std::cout << "Введённые данные не являются число\n\n";
+			Sleep(1500);
+			return false;
+		}
+	}
+	return true;
+}
+
+
+template<typename Arr> void FillArr(Arr* dynamicArr, Arr* staticArr, size_t size) {
+	for (size_t i = 0; i < size; i++) {
+		dynamicArr[i] = staticArr[i];
 	}
 }
 inline void Getline(std::string& str) {
@@ -154,14 +369,3 @@ inline void Err(int time) {
 	Sleep(time);
 	system("cls");
 }
-
-/*
-std::string name[staticSize]{
-		"Апельсины 1кг", "Яблоки 1кг", "Молоко 1л", "Хлеб 1шт",
-		"Пылесос 1шт",
-		"Тарелки 1шт",
-		"Туалетная бумага 1уп",
-		"Отбеливатель 1л",
-		"Ручки 1шт", "Карандаши 1шт"
-	};
-*/
