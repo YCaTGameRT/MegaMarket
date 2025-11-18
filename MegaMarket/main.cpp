@@ -2,6 +2,7 @@
 #include <Windows.h>
 #include <string>
 #include <iomanip>
+#include <unordered_set>
 
 //учётки
 size_t userSize = 2;
@@ -11,6 +12,8 @@ std::string userStatus[3]{ "Супер Администратор", "Администратор", "Сотрудник" }
 std::string* statusArr = new std::string[userSize]{ userStatus[0], userStatus[2] };
 std::string currentStatus;
 void ChangeUsers();
+void ShowUsers();
+void AddNewUser();
 
 //склад
 size_t storageSize = 0;
@@ -34,6 +37,8 @@ void Start();
 bool Login();
 void ShowSuperAdminMenu();
 bool IsNumber(const std::string& str);
+bool CheckLogin(const std::string& str);
+bool CheckPass(const std::string& str);
 
 //система
 template<typename Arr> void FillArr(Arr* dynamicArr, Arr* staticArr, size_t size);
@@ -63,16 +68,16 @@ void ChangeUsers() {
 		std::cout << "1 - добавить нового пользователя\n2 - показать пользователей\n3 - изменить пароль\n4 - удалить пользователя\n0 - выйти из редактора\n>>: ";
 		Getline(choose);
 		if (choose == "1") {
-			
+			AddNewUser();
 		}
 		else if (choose == "2" && userSize > 1) {
-			
+			ShowUsers();
 		}
 		else if (choose == "3" && userSize > 1) {
 			
 		}
 		else if (choose == "4" && userSize > 1) {
-
+			
 		}
 		else if (choose == "0") {
 			system("cls");
@@ -86,6 +91,109 @@ void ChangeUsers() {
 		}
 	}
 }
+void ShowUsers() {
+	system("cls");
+	std::cout << "#\t" << std::left << std::setw(10) << "Логин\t\tПароль\tРоль\n";
+	for (size_t i = 1; i < userSize; i++) {
+		std::cout << i << "\t" << std::left << std::setw(10) << loginArr[i] << "\t" << passArr[i] << "\t" << statusArr[i] << "\n";
+	}
+	system("pause");
+}
+void AddNewUser() {
+	std::string newLogin, newPass, newRole, choose;
+	bool exit;
+	while (true) {
+		exit = true;
+		while (true) {
+			system("cls");
+			std::cout << "\tСоздание нового пользователя\n\n";
+			std::cout << "\tВведите логин нового пользователя или \"exit\" для выхода\n>>: ";
+			Getline(newLogin);
+			if (newLogin == "exit") {
+				std::cout << "Создание нового пользователя прервано!\n\n";
+				Sleep(1500);
+				exit = false;
+				break;
+			}
+			else if (CheckLogin(newLogin)) {
+				break;
+			}
+		}
+		while (exit) {
+			system("cls");
+			std::cout << "\tСоздание нового пользователя\n\n";
+			std::cout << "\tВведите пароль нового пользователя\n>>: ";
+			Getline(newPass);
+			if (newPass == "exit") {
+				std::cout << "Создание нового пользователя прервано!\n\n";
+				Sleep(1500);
+				exit = false;
+				break;
+			}
+			if (CheckLogin(newPass)) {
+				break;
+			}
+		}
+		while (exit) {
+			system("cls");
+			std::cout << "\tСоздание нового пользователя\n\n";
+			std::cout << "\tВыберите роль нового пользователя\n1 - администратор\n2 - сотрудник\n>>: ";
+			Getline(choose);
+			if (choose == "exit") {
+				std::cout << "Создание нового пользователя прервано!\n\n";
+				Sleep(1500);
+				exit = false;
+				break;
+			}
+			if (choose == "1") {
+				newRole = userStatus[1];
+				break;
+			}
+			else if (choose == "2") {
+				newRole = userStatus[2];
+				break;
+			}
+			else {
+				Err();
+			}
+		}
+		while (exit) {
+			std::cout << "Пользователь: " << newLogin << "\nПароль: " << newPass << "\nРоль: " << newRole << "\nПодтвердить?\n1 - да\n2 - нет\n>>: ";
+			Getline(choose);
+			if (choose == "1") {
+				userSize++;
+				std::string* loginArrTemp = new std::string[userSize];
+				std::string* passArrTemp = new std::string[userSize];
+				std::string* statusArrTemp = new std::string[userSize];
+				FillArr(loginArrTemp, loginArr, userSize - 1);
+				FillArr(passArrTemp, passArr, userSize - 1);
+				FillArr(statusArrTemp, statusArr, userSize - 1);
+				loginArrTemp[userSize - 1] = newLogin;
+				passArrTemp[userSize - 1] = newPass;
+				statusArrTemp[userSize - 1] = newRole;
+				std::swap(loginArr, loginArrTemp);
+				std::swap(passArr, passArrTemp);
+				std::swap(statusArr, statusArrTemp);
+				delete[]loginArrTemp, passArrTemp, statusArrTemp;
+				std::cout << "Пользователь успешно добавлен!\n";
+				Sleep(1500);
+				break;
+			}
+			else if (choose == "2") {
+				std::cout << "Отмена\n";
+				Sleep(1500);
+				break;
+			}
+			else {
+				Err();
+			}
+		}
+		if (exit == false) {
+			break;
+		}
+	}
+}
+
 
 void CreateStorage() {
 	const int staticSize = 10;
@@ -639,6 +747,59 @@ bool IsNumber(const std::string& str) {
 		}
 	}
 	return true;
+}
+bool CheckLogin(const std::string& str) {
+	if (str.empty() || str.size() > 15) {
+		std::cout << "Недопустимая длина логина. От 1 до 15\n";
+		Sleep(1500);
+		return false;
+	}
+	std::unordered_set<char> specialSymbols;
+	for (char i = 'A'; i <= 'Z'; i++) {
+		specialSymbols.insert(i);
+	}
+	for (char i = 'a'; i <= 'z'; i++) {
+		specialSymbols.insert(i);
+	}
+	for (char symb : str) {
+		if (!specialSymbols.count(symb)) {
+			std::cout << "Некорректные символы в логине\n";
+			Sleep(1500);
+			return false;
+		}
+	}
+	return true;
+}
+bool CheckPass(const std::string& str) {
+	if (str.empty() < 5 || str.size() > 40) {
+		std::cout << "Недопустимая длина пароля. От 5 до 40\n";
+		Sleep(1500);
+		return false;
+	}
+	std::unordered_set<char> specialSymbols;
+	std::unordered_set<char> passSymbols{'!', '@', '#', '$', '%', '*', '&', '(', ')', '-', '_', '=', '+', '/', '?', '|', '\\', '\"', '\'', '.', ',', '<', '>', '~', '`', ':', ';', '{', '}', '[', ']'};
+	int symbolCount = 0, maxSymbolCount = 3;
+	for (char i = 'A'; i <= 'Z'; i++) {
+		specialSymbols.insert(i);
+	}
+	for (char symb : str) {
+		if (!specialSymbols.count(symb)) {
+			std::cout << "Некорректные символы в логине\n";
+			Sleep(1500);
+			return false;
+		}
+	}
+	for (char symb : str) {
+		if (passSymbols.count(symb)) {
+			symbolCount++;
+			if (symbolCount == maxSymbolCount) {
+				return true;
+			}
+		}
+	}
+	std::cout << "Требуется минимум 3 спец. символа\n";
+	Sleep(1500);
+	return false;
 }
 
 
