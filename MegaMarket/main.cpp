@@ -749,6 +749,13 @@ bool IsNumber(const std::string& str) {
 	return true;
 }
 bool CheckLogin(const std::string& str) {
+	for (size_t i = 0; i < userSize; i++) {
+		if (str == loginArr[i]) {
+			std::cout << "Такой пользователь существует!\n";
+			Sleep(1500);
+			return false;
+		}
+	}
 	if (str.empty() || str.size() > 15) {
 		std::cout << "Недопустимая длина логина. От 1 до 15\n";
 		Sleep(1500);
@@ -816,5 +823,3 @@ inline void Err(int time) {
 	Sleep(time);
 	system("cls");
 }
-
-//test
