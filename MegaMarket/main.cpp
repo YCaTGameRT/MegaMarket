@@ -816,3 +816,5 @@ inline void Err(int time) {
 	Sleep(time);
 	system("cls");
 }
+
+//test
