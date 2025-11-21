@@ -12,8 +12,9 @@ std::string userStatus[3]{ "Супер Администратор", "Администратор", "Сотрудник" }
 std::string* statusArr = new std::string[userSize]{ userStatus[0], userStatus[2] };
 std::string currentStatus;
 void ChangeUsers();
-void ShowUsers();
+void ShowUsers(int mode = 0);
 void AddNewUser();
+void ChangePass();
 
 //склад
 size_t storageSize = 0;
@@ -91,13 +92,22 @@ void ChangeUsers() {
 		}
 	}
 }
-void ShowUsers() {
+void ShowUsers(int mode) {
 	system("cls");
-	std::cout << "#\t" << std::left << std::setw(10) << "Логин\t\tПароль\tРоль\n";
-	for (size_t i = 1; i < userSize; i++) {
-		std::cout << i << "\t" << std::left << std::setw(10) << loginArr[i] << "\t" << passArr[i] << "\t" << statusArr[i] << "\n";
+	if (mode == 0) {
+		std::cout << "#\t" << std::left << std::setw(10) << "Логин\t\tПароль\tРоль\n";
+		for (size_t i = 1; i < userSize; i++) {
+			std::cout << i << "\t" << std::left << std::setw(10) << loginArr[i] << "\t" << passArr[i] << "\t" << statusArr[i] << "\n";
+		}
+		Sleep(1500);
 	}
-	system("pause");
+	else if (mode == 1) {
+		std::cout << "#\t" << std::left << std::setw(10) << "Логин\t\tПароль\tРоль\n";
+		for (size_t i = 0; i < userSize; i++) {
+			std::cout << i << "\t" << std::left << std::setw(10) << loginArr[i] << "\t" << passArr[i] << "\t" << statusArr[i] << "\n";
+		}
+		Sleep(1500);
+	}
 }
 void AddNewUser() {
 	std::string newLogin, newPass, newRole, choose;
@@ -190,6 +200,30 @@ void AddNewUser() {
 		}
 		if (exit == false) {
 			break;
+		}
+	}
+}
+void ChangePass() {
+	std::string newPass1, newPass2, choose;
+	int userNumber = 0, isAdmin = 0;
+	while (true) {
+		if (currentStatus == userStatus[0]) {
+			ShowUsers(1);
+			isAdmin = 0;
+		}
+		else {
+			ShowUsers(0);
+			isAdmin = 1;
+		}
+		std::cout << "Выберите номер пользователя для смены пароля или \"exit\" для выхода\n>>: ";
+		Getline(choose);
+		if (choose == "exit") {
+			std::cout << "Отмена операции пополнения\n";
+			Sleep(1500);
+			break;
+		}
+		else if (IsNumber(choose)) {
+			userNumber = std::stoi(choose);
 		}
 	}
 }
