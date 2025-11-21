@@ -15,6 +15,7 @@ void ChangeUsers();
 void ShowUsers(int mode = 0);
 void AddNewUser();
 void ChangePass();
+void DeleteUser();
 
 //склад
 size_t storageSize = 0;
@@ -75,10 +76,10 @@ void ChangeUsers() {
 			ShowUsers();
 		}
 		else if (choose == "3" && userSize > 1) {
-			
+			ChangePass();
 		}
 		else if (choose == "4" && userSize > 1) {
-			
+			DeleteUser();
 		}
 		else if (choose == "0") {
 			system("cls");
@@ -224,6 +225,84 @@ void ChangePass() {
 		}
 		else if (IsNumber(choose)) {
 			userNumber = std::stoi(choose);
+			if (userNumber < isAdmin || userNumber > userSize - 1) {
+				std::cout << "Пользователя с таким номером не существует!\n";
+				Sleep(1500);
+			}
+			else {
+				while (true) {
+					system("cls");
+					std::cout << "Введите новый пароль для пользователя " << loginArr[userNumber] << "\n>>: ";
+					Getline(newPass1);
+					std::cout << "Подтвердите новый пароль для пользователя " << loginArr[userNumber] << "\n>>: ";
+					Getline(newPass2);
+					if (CheckPass(newPass1) && CheckPass(newPass1) && newPass1 == newPass2) {
+						passArr[userNumber] = newPass1;
+						std::cout << "Пароль успешно сменён\n";
+						Sleep(1500);
+						break;
+					}
+					else {
+						std::cout << "Повторите попытку\n";
+						Sleep(1500);
+					}
+				}
+			}
+		}
+		else {
+			Err();
+		}
+	}
+}
+void DeleteUser() {
+	std::string chooseNumber, checkPass, choose;
+	int userNumber = 0, isAdmin = 0;
+	while (true) {
+		if (currentStatus == userStatus[0]) {
+			if (userSize < 2) {
+				std::cout << "Нет доступных пользователей для удаления!\n";
+				Sleep(1500);
+				return;
+			}
+			ShowUsers();
+			isAdmin = 1;
+		}
+		else {
+			
+		}
+		std::cout << "Выберите номер пользователя для удаления или \"exit\" для выхода\n>>: ";
+		Getline(choose);
+		if (choose == "exit") {
+			std::cout << "Отмена операции удаления\n";
+			Sleep(1500);
+			break;
+		}
+		else if (IsNumber(choose)) {
+			userNumber = std::stoi(choose);
+			if (userNumber < isAdmin || userNumber > userSize - 1) {
+				std::cout << "Пользователя с таким номером не существует!\n";
+				Sleep(1500);
+			}
+			while (true) {
+				system("cls");
+				std::cout << "Удаление пользователя: " << loginArr[userNumber] << "\nДля подтверждения введите пароль суперадминестратора или \"exit\" для выхода\n>>: ";
+				Getline(checkPass);
+				if (checkPass == "exit") {
+					std::cout << "Отмена удаления пользователя" << loginArr[userNumber] << "\n";
+					Sleep(1500);
+					break;
+				}
+				else if (checkPass == passArr[0]) {
+
+				}
+				else {
+					std::cout << "Некорректный пароль суперадмина\n";
+					Sleep(1500);
+				}
+			}
+		}
+		else {
+			Err();
 		}
 	}
 }
@@ -812,7 +891,7 @@ bool CheckLogin(const std::string& str) {
 	return true;
 }
 bool CheckPass(const std::string& str) {
-	if (str.empty() < 5 || str.size() > 40) {
+	if (str.size() < 5 || str.size() > 40) {
 		std::cout << "Недопустимая длина пароля. От 5 до 40\n";
 		Sleep(1500);
 		return false;
@@ -823,9 +902,12 @@ bool CheckPass(const std::string& str) {
 	for (char i = 'A'; i <= 'Z'; i++) {
 		specialSymbols.insert(i);
 	}
+	for (char i = 'a'; i <= 'z'; i++) {
+		specialSymbols.insert(i);
+	}
 	for (char symb : str) {
 		if (!specialSymbols.count(symb)) {
-			std::cout << "Некорректные символы в логине\n";
+			std::cout << "Некорректные символы в пароле\n";
 			Sleep(1500);
 			return false;
 		}
