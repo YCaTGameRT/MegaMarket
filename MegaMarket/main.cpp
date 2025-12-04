@@ -29,6 +29,7 @@ std::string* nameArr;
 unsigned int* countArr;
 double* priceArr;
 void CreateStorage();
+void CreateNewStorage();
 void ShowStorage(int mode = 0);
 void AddStorageItem();
 void RemoveStorageItem();
@@ -37,6 +38,7 @@ void ChangeStorage();
 void AddNewItem();
 void ChangeName();
 void DeleteItem();
+void DeleteNewStorageItems(int id);
 
 //продажи
 size_t checkSize = 0;
@@ -403,7 +405,7 @@ void DeleteUser() {
 void CreateStorage() {
 	const int staticSize = 10;
 	int id[staticSize]{ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-	std::string name[staticSize]{ "Апельсины", "Яблоки", "Молоко", "Хлеб", "Пылесос", "Тарелки", "Туалетная бумага", "Отбеливатель", "Ручки", "Карандаши" };
+	std::string name[staticSize]{ "Апельсины 1кг", "Яблоки 1кг", "Молоко 1шт", "Хлеб 1шт", "Пылесос 1шт", "Тарелки 1шт", "Туалетная бумага 1уп", "Отбеливатель 1шт", "Ручки 1шт", "Карандаши 1шт" };
 	unsigned int count[staticSize]{ 42, 15, 73, 62, 844, 14, 52, 252, 51, 99 };
 	double price[staticSize]{ 129.99, 339.99, 49.99, 59.99, 3259.99, 99.99, 159.99, 299.99, 5.99, 6.99 };
 	if (staticStorageCreated) {
@@ -423,6 +425,16 @@ void CreateStorage() {
 	FillArr(nameArr, name, storageSize);
 	FillArr(countArr, count, storageSize);
 	FillArr(priceArr, price, storageSize);
+}
+void CreateNewStorage() {
+	CreateStorage();
+	for (size_t i = 0; i < 10; i++) {
+		DeleteNewStorageItems(i);
+	}
+	AddNewItem();
+	std::cout << "Новый склад готов!\n\n";
+	ShowStorage();
+	system("cls");
 }
 void ShowStorage(int mode) {
 	if (mode == 0) {
@@ -833,6 +845,30 @@ void DeleteItem() {
 		}
 	}
 }
+void DeleteNewStorageItems(int id) {
+	storageSize--;
+	int* idArrTemp = new int[storageSize];
+	std::string* nameArrTemp = new std::string[storageSize];
+	unsigned int* countArrTemp = new unsigned int[storageSize];
+	double* priceArrTemp = new double[storageSize];
+	for (size_t i = 0, c = 0; i < storageSize; i++, c++) {
+		if (id == c) {
+			c++;
+		}
+		idArrTemp[i] = i + 1;
+		nameArrTemp[i] = nameArr[c];
+		countArrTemp[i] = countArr[c];
+		priceArrTemp[i] = priceArr[c];
+	}
+	std::swap(idArr, idArrTemp);
+	std::swap(nameArr, nameArrTemp);
+	std::swap(countArr, countArrTemp);
+	std::swap(priceArr, priceArrTemp);
+	delete[]idArrTemp;
+	delete[]nameArrTemp;
+	delete[]countArrTemp;
+	delete[]priceArrTemp;
+}
 
 
 void Selling() {
@@ -1061,7 +1097,8 @@ void Start() {
 						break;
 					}
 					else if (choose == "2") {
-						//новый склад с нуля
+						CreateNewStorage();
+						ShowSuperAdminMenu();
 						break;
 					}
 					else {
