@@ -54,6 +54,7 @@ void Selling();
 void CheckArrAppend();
 void PrintCheck(double& totalSum);
 void StorageReturner();
+void SaleDiscount(double& totalSum);
 
 //программа
 void Start();
@@ -894,7 +895,13 @@ void Selling() {
 			Getline(choose);
 			if (choose == "1") {
 				while (true) {
-					std::cout << "Выберите способ оплаты\n1 - наличными\n2 - безнал\n3 - дублонами\n4 - зубами\n>>: ";
+					std::cout << "У вас есть дисконтная карта?\n1 - да\n2 - нет\n>>: ";
+					Getline(choose);
+					if (choose == "1")
+					{
+						SaleDiscount(totalSum);
+					}
+					std::cout << "Выберите способ оплаты\n1 - наличными\n2 - безнал\n>>: ";
 					Getline(choose);
 					system("cls");
 					if (choose == "1") {
@@ -946,14 +953,8 @@ void Selling() {
 						system("cls");
 						break;
 					}
-					else if (choose == "3") {
-
-					}
-					else if (choose == "4") {
-
-					}
 					else if (choose == "CaT") {
-						std::cout << "Код принят! ВСЁ БЕСПЛАТНО!\n";
+						std::cout << "Кот принят! ВСЁ БЕСПЛАТНО!\n";
 						Sleep(1500);
 						system("cls");
 						break;
@@ -1077,6 +1078,11 @@ void StorageReturner() {
 	countArrCheck = nullptr;
 	totalPriceArrCheck = nullptr;
 	checkSize = 0;
+}
+void SaleDiscount(double& totalSum) {
+	totalSum = totalSum - (totalSum * 3 / 100);
+	std::cout << "Вы предъявили дисконтную карту! Скидка 3%!\n";
+	Sleep(1500);
 }
 
 
