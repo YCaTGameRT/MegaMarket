@@ -50,11 +50,13 @@ double* totalPriceArrCheck;
 double cash = 1900 + rand() % 300;
 double cashIncome = 0.0;
 double bankIncome = 0.0;
+bool SaleAppleTrigger = false;
 void Selling();
 void CheckArrAppend();
 void PrintCheck(double& totalSum);
 void StorageReturner();
 void SaleDiscount(double& totalSum);
+void SaleApple(int id, unsigned int& countArrCheck, double price, double& totalSum);
 
 //программа
 void Start();
@@ -900,7 +902,13 @@ void Selling() {
 					if (choose == "1")
 					{
 						SaleDiscount(totalSum);
+						break;
 					}
+					else {
+						Err();
+					}
+				}
+				while (true) {
 					std::cout << "Выберите способ оплаты\n1 - наличными\n2 - безнал\n>>: ";
 					Getline(choose);
 					system("cls");
@@ -1025,6 +1033,7 @@ void Selling() {
 		priceArrCheck[index] = priceArr[id];
 		countArrCheck[index] = count;
 		totalPriceArrCheck[index] = count * priceArr[id];
+		SaleApple(idArrCheck[index], countArrCheck[index], priceArrCheck[index], totalPriceArrCheck[index]);
 		countArr[id] -= count;
 		totalSum += totalPriceArrCheck[index];
 		std::cout << "Товар добавлен в чек\n\n";
@@ -1057,9 +1066,13 @@ void CheckArrAppend() {
 	delete[]totalPriceArrCheckTemp;
 }
 void PrintCheck(double &totalSum) {
-	std::cout << "#\t" << "ID\t" << std::left << std::setw(25) << "название товаров\t\tкол-во\t\tцена за ед.\t\tитого\n";
+	std::cout << "#\t" << "ID\t" << std::left << std::setw(25) << "название товаров\t\tкол-во\t\tцена за ед.\tитого\n";
 	for (size_t i = 0; i < checkSize; i++) {
 		std::cout << i + 1 << "\t" << idArrCheck[i] << "\t" << std::left << std::setw(25) << nameArrCheck[i] << "\t" << countArrCheck[i] << "\t\t" << priceArrCheck[i] << "\t\t" << totalPriceArrCheck[i] << "\n";
+		if (idArrCheck[i] == 2 && SaleAppleTrigger) {
+			std::cout << "АКЦИЯ! Вы получаете " << countArrCheck[i] / 5 << "кг яблок в подарок!\n";
+			SaleAppleTrigger = false;
+		}
 	}
 	std::cout << "Итого к оплате: " << totalSum << "\n";
 }
@@ -1083,6 +1096,12 @@ void SaleDiscount(double& totalSum) {
 	totalSum = totalSum - (totalSum * 3 / 100);
 	std::cout << "Вы предъявили дисконтную карту! Скидка 3%!\n";
 	Sleep(1500);
+}
+void SaleApple(int id, unsigned int& countArrCheck, double price, double& totalSum) {
+	if (id == 2 && (countArrCheck % 5 == 0)) {
+		totalSum -= price * countArrCheck / 5;
+		SaleAppleTrigger = true;
+	}
 }
 
 
